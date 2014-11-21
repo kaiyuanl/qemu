@@ -48,6 +48,7 @@
 #define INTC_BASEADDR       0x81800000
 #define UART16550_BASEADDR  0x83e01003
 #define TIMER_BASEADDR      0x83c00000
+#define DES_BASEADDR		0x83c02000
 #define PFLASH_BASEADDR     0xfc000000
 
 #define TIMER_IRQ           3
@@ -252,6 +253,12 @@ static void virtex_init(MachineState *machine)
     sysbus_mmio_map(SYS_BUS_DEVICE(dev), 0, TIMER_BASEADDR);
     sysbus_connect_irq(SYS_BUS_DEVICE(dev), 0, irq[TIMER_IRQ]);
 
+	/* SoC DES module*/
+	dev = qdev_create(NULL, "soc-des");
+	qdev_init_nofail(dev);
+	sysbus_mmio_map(SYS_BUS_DEVICE(dev), 0, DES_BASEADDR);
+	sysbus_connect_irq(SYS_BUS_DEVICE(dev), 0, cpu_irq[0]);
+
     if (kernel_filename) {
         uint64_t entry, low, high;
         hwaddr boot_offset;
@@ -259,8 +266,8 @@ static void virtex_init(MachineState *machine)
         /* Boots a kernel elf binary.  */
         kernel_size = load_elf(kernel_filename, NULL, NULL,
                                &entry, &low, &high, 1, ELF_MACHINE, 0);
-        boot_info.bootstrap_pc = entry & 0x00ffffff;
 
+        boot_info.bootstrap_pc = entry & 0x00ffffff;
         if (kernel_size < 0) {
             boot_offset = 0x1200000;
             /* If we failed loading ELF's try a raw image.  */
@@ -268,6 +275,7 @@ static void virtex_init(MachineState *machine)
                                               boot_offset,
                                               ram_size);
             boot_info.bootstrap_pc = boot_offset;
+ 
             high = boot_info.bootstrap_pc + kernel_size + 8192;
         }
 
