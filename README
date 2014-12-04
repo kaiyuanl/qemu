@@ -1,11 +1,5 @@
-QEMU test branch for research. Forking from offical QEMU branch.
+##QEMU test branch for research. 
 
-1. Add DES (Data Encryption Standard ) device to QEMU.
-	Relevant code changes:
-		hw/misc/soc_des.c
-		hw/misc/Makefile.objs
-		hw/ppc/virtex_ml507.c
-   
-	Demo program to verify functions of new DES device. Building by cross compiler for PowerPC architecture.
-		demo/des_demo/*
-	
+This branch forks from offical QEMU branch.
+
+Details please see [Wiki](https://github.com/kaiyuanl/qemu/wiki)
